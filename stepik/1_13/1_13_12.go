@@ -7,11 +7,8 @@ func main() {
 	var n int
 	fmt.Scan(&n)
 	res := 1
-	for {
+	for res <= n {
 		fmt.Printf("%d ", res)
 		res = 2 * res
-		if res > n {
-			break
-		}
 	}
 }
