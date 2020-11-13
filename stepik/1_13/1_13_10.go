@@ -8,7 +8,7 @@ func main() {
 	fmt.Scan(&a)
 	fmt.Scan(&b)
 	var res int
-	for i := a; i <= b; i++ {
+	for i := b; i >= a; i-- {
 		if i%7 == 0 && i > res {
 			res = i
 		}
