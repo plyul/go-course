@@ -6,11 +6,11 @@ import (
 )
 
 func TestInput(t *testing.T) {
-	input := []int{10,4,3,9,-5,-3}
+	input := []int{10, 4, 3, 9, -5, -3}
 	sa := New(10)
 	sa.Input(input)
 
-	expected := []int{4,9,10}
+	expected := []int{4, 9, 10}
 	if len(sa.array) != len(expected) {
 		t.Errorf("Expected length is %d, got %d", len(expected), len(sa.array))
 	}
@@ -97,14 +97,14 @@ func TestGetInsertIndex(t *testing.T) {
 	}
 }
 
-func BenchmarkSortedArray_Insert100(b *testing.B) {	benchmarkSortedArray_Insert(100, b) }
-func BenchmarkSortedArray_Insert1k(b *testing.B) {	benchmarkSortedArray_Insert(1000, b) }
-func BenchmarkSortedArray_Insert10k(b *testing.B) {	benchmarkSortedArray_Insert(10000, b) }
+func BenchmarkSortedArray_Insert100(b *testing.B)  { benchmarkSortedArray_Insert(100, b) }
+func BenchmarkSortedArray_Insert1k(b *testing.B)   { benchmarkSortedArray_Insert(1000, b) }
+func BenchmarkSortedArray_Insert10k(b *testing.B)  { benchmarkSortedArray_Insert(10000, b) }
 func BenchmarkSortedArray_Insert100k(b *testing.B) { benchmarkSortedArray_Insert(100000, b) }
-func BenchmarkSortedArray_Insert110(b *testing.B) {	benchmarkSortedArray_Insert(110000, b) }
-func BenchmarkSortedArray_Insert120(b *testing.B) {	benchmarkSortedArray_Insert(120000, b) }
-func BenchmarkSortedArray_Insert130(b *testing.B) {	benchmarkSortedArray_Insert(130000, b) }
-func BenchmarkSortedArray_Insert140(b *testing.B) {	benchmarkSortedArray_Insert(140000, b) }
+func BenchmarkSortedArray_Insert110k(b *testing.B) { benchmarkSortedArray_Insert(110000, b) }
+func BenchmarkSortedArray_Insert120k(b *testing.B) { benchmarkSortedArray_Insert(120000, b) }
+func BenchmarkSortedArray_Insert130k(b *testing.B) { benchmarkSortedArray_Insert(130000, b) }
+func BenchmarkSortedArray_Insert140k(b *testing.B) { benchmarkSortedArray_Insert(140000, b) }
 
 func benchmarkSortedArray_Insert(n int, b *testing.B) {
 	rand.Seed(1)
@@ -114,5 +114,13 @@ func benchmarkSortedArray_Insert(n int, b *testing.B) {
 	for i := 0; i < n; i++ {
 		sa.Insert(v)
 	}
+}
 
+func BenchmarkSortedArray_Insert_AutoConverge(b *testing.B) {
+	rand.Seed(1)
+	sa := New(0)
+	v := rand.Intn(65536)
+	for i := 0; i < b.N; i++ {
+		sa.Insert(v)
+	}
 }
