@@ -79,7 +79,7 @@ func TestDelete(t *testing.T) {
 	}
 }
 
-func TestGetSortedIndex(t *testing.T) {
+func TestGetIndex(t *testing.T) {
 	var testCases = []struct {
 		array       []int
 		value       int
@@ -88,9 +88,11 @@ func TestGetSortedIndex(t *testing.T) {
 		{[]int{}, 10, 0},
 		{[]int{1, 3, 5, 7, 9}, 4, 2},
 		{[]int{1, 3, 5, 7, 9}, 10, 5},
+		{[]int{1, 3, 5, 5, 5, 9}, 5, 2},
+		{[]int{1, 3, 5, 7, 9}, 9, 4},
 	}
 	for _, tt := range testCases {
-		gotIndex := getSortedIndex(tt.array, tt.value)
+		gotIndex := getIndex(tt.array, tt.value)
 		if gotIndex != tt.insertIndex {
 			t.Errorf("Expect index %d for value %d in array %v, got %d", tt.insertIndex, tt.value, tt.array, gotIndex)
 		}

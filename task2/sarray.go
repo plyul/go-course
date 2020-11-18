@@ -26,7 +26,7 @@ func (a *SortedArray) Insert(value int) {
 	if value < 0 {
 		panic("SortedArray.Insert: negative value passed")
 	}
-	insertIndex := getSortedIndex(a.array, value)
+	insertIndex := getIndex(a.array, value)
 	a.array = append(a.array, 0)
 	copy(a.array[insertIndex+1:], a.array[insertIndex:])
 	a.array[insertIndex] = value
@@ -37,23 +37,26 @@ func (a *SortedArray) Delete(value int) {
 	if value < 0 {
 		panic("SortedArray.Delete: negative value passed")
 	}
-	if len(a.array) == 0 {
-		return
-	}
-	for i := 0; i < len(a.array)-1; i++ {
+	for {
+		if len(a.array) == 0 {
+			return
+		}
+		i := getIndex(a.array, value)
+		if i == len(a.array) {
+			return
+		}
 		if a.array[i] == value {
 			copy(a.array[i:], a.array[i+1:])
 			a.array = a.array[:len(a.array)-1]
-			i--
+		} else {
+			return
 		}
-	}
-	if len(a.array) > 0 && a.array[len(a.array)-1] == value {
-		a.array = a.array[:len(a.array)-1]
 	}
 }
 
-// getSortedtIndex returns index for array, inserting value in which will retain array sorted.
-func getSortedIndex(array []int, value int) int {
+// getIndex returns index of given value in array.
+// If value is not present in array, inserting it at given position will retain array sorted.
+func getIndex(array []int, value int) int {
 	var low int = 0
 	var high = len(array)
 	for low < high {
