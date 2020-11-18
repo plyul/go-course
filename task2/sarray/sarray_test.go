@@ -99,6 +99,8 @@ func TestGetIndex(t *testing.T) {
 	}
 }
 
+// go test -bench='Insert\d' .
+// Evaluated complexity O(n^2)
 func BenchmarkSortedArray_Insert100(b *testing.B)  { benchmarkSortedArray_Insert(100, b) }
 func BenchmarkSortedArray_Insert1k(b *testing.B)   { benchmarkSortedArray_Insert(1000, b) }
 func BenchmarkSortedArray_Insert10k(b *testing.B)  { benchmarkSortedArray_Insert(10000, b) }
@@ -126,7 +128,8 @@ func benchmarkSortedArray_Insert(n int, b *testing.B) {
 	}
 }
 
-// go test -bench=.InsertOne. .
+// go test -bench='InsertOne' .
+// Evaluated complexity O(n)
 func BenchmarkSortedArray_InsertOne1k(b *testing.B)   { benchmarkSortedArray_InsertOne(1000, b) }
 func BenchmarkSortedArray_InsertOne10k(b *testing.B)  { benchmarkSortedArray_InsertOne(10000, b) }
 func BenchmarkSortedArray_InsertOne20k(b *testing.B)  { benchmarkSortedArray_InsertOne(20000, b) }
@@ -156,23 +159,23 @@ func benchmarkSortedArray_InsertOne(n int, b *testing.B) {
 	sa.Insert(v)
 }
 
-// go test -bench=.DeleteOne. .
+// go test -bench='DeleteOne' .
 func BenchmarkSortedArray_DeleteOne1k(b *testing.B)   { benchmarkSortedArray_DeleteOne(1000, b) }
-func BenchmarkSortedArray_DeleteOne10k(b *testing.B)   { benchmarkSortedArray_DeleteOne(10000, b) }
-func BenchmarkSortedArray_DeleteOne20k(b *testing.B)   { benchmarkSortedArray_DeleteOne(20000, b) }
-func BenchmarkSortedArray_DeleteOne30k(b *testing.B)   { benchmarkSortedArray_DeleteOne(30000, b) }
-func BenchmarkSortedArray_DeleteOne40k(b *testing.B)   { benchmarkSortedArray_DeleteOne(40000, b) }
-func BenchmarkSortedArray_DeleteOne50k(b *testing.B)   { benchmarkSortedArray_DeleteOne(50000, b) }
-func BenchmarkSortedArray_DeleteOne60k(b *testing.B)   { benchmarkSortedArray_DeleteOne(60000, b) }
-func BenchmarkSortedArray_DeleteOne70k(b *testing.B)   { benchmarkSortedArray_DeleteOne(70000, b) }
-func BenchmarkSortedArray_DeleteOne80k(b *testing.B)   { benchmarkSortedArray_DeleteOne(80000, b) }
-func BenchmarkSortedArray_DeleteOne90k(b *testing.B)   { benchmarkSortedArray_DeleteOne(90000, b) }
-func BenchmarkSortedArray_DeleteOne100k(b *testing.B)   { benchmarkSortedArray_DeleteOne(100000, b) }
-func BenchmarkSortedArray_DeleteOne110k(b *testing.B)   { benchmarkSortedArray_DeleteOne(110000, b) }
-func BenchmarkSortedArray_DeleteOne120k(b *testing.B)   { benchmarkSortedArray_DeleteOne(120000, b) }
-func BenchmarkSortedArray_DeleteOne130k(b *testing.B)   { benchmarkSortedArray_DeleteOne(130000, b) }
-func BenchmarkSortedArray_DeleteOne140k(b *testing.B)   { benchmarkSortedArray_DeleteOne(140000, b) }
-func BenchmarkSortedArray_DeleteOne150k(b *testing.B)   { benchmarkSortedArray_DeleteOne(150000, b) }
+func BenchmarkSortedArray_DeleteOne10k(b *testing.B)  { benchmarkSortedArray_DeleteOne(10000, b) }
+func BenchmarkSortedArray_DeleteOne20k(b *testing.B)  { benchmarkSortedArray_DeleteOne(20000, b) }
+func BenchmarkSortedArray_DeleteOne30k(b *testing.B)  { benchmarkSortedArray_DeleteOne(30000, b) }
+func BenchmarkSortedArray_DeleteOne40k(b *testing.B)  { benchmarkSortedArray_DeleteOne(40000, b) }
+func BenchmarkSortedArray_DeleteOne50k(b *testing.B)  { benchmarkSortedArray_DeleteOne(50000, b) }
+func BenchmarkSortedArray_DeleteOne60k(b *testing.B)  { benchmarkSortedArray_DeleteOne(60000, b) }
+func BenchmarkSortedArray_DeleteOne70k(b *testing.B)  { benchmarkSortedArray_DeleteOne(70000, b) }
+func BenchmarkSortedArray_DeleteOne80k(b *testing.B)  { benchmarkSortedArray_DeleteOne(80000, b) }
+func BenchmarkSortedArray_DeleteOne90k(b *testing.B)  { benchmarkSortedArray_DeleteOne(90000, b) }
+func BenchmarkSortedArray_DeleteOne100k(b *testing.B) { benchmarkSortedArray_DeleteOne(100000, b) }
+func BenchmarkSortedArray_DeleteOne110k(b *testing.B) { benchmarkSortedArray_DeleteOne(110000, b) }
+func BenchmarkSortedArray_DeleteOne120k(b *testing.B) { benchmarkSortedArray_DeleteOne(120000, b) }
+func BenchmarkSortedArray_DeleteOne130k(b *testing.B) { benchmarkSortedArray_DeleteOne(130000, b) }
+func BenchmarkSortedArray_DeleteOne140k(b *testing.B) { benchmarkSortedArray_DeleteOne(140000, b) }
+func BenchmarkSortedArray_DeleteOne150k(b *testing.B) { benchmarkSortedArray_DeleteOne(150000, b) }
 
 func benchmarkSortedArray_DeleteOne(n int, b *testing.B) {
 	rand.Seed(1)
