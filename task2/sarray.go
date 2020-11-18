@@ -26,7 +26,7 @@ func (a *SortedArray) Insert(value int) {
 	if value < 0 {
 		panic("SortedArray.Insert: negative value passed")
 	}
-	insertIndex := getInsertIndex(a.array, value)
+	insertIndex := getSortedIndex(a.array, value)
 	a.array = append(a.array, 0)
 	copy(a.array[insertIndex+1:], a.array[insertIndex:])
 	a.array[insertIndex] = value
@@ -52,8 +52,8 @@ func (a *SortedArray) Delete(value int) {
 	}
 }
 
-// getInsertIndex returns index for array, inserting value in which will retain array sorted.
-func getInsertIndex(array []int, value int) int {
+// getSortedtIndex returns index for array, inserting value in which will retain array sorted.
+func getSortedIndex(array []int, value int) int {
 	var low int = 0
 	var high = len(array)
 	for low < high {
