@@ -11,7 +11,7 @@ import (
 func main() {
 	inputString, err := bufio.NewReader(os.Stdin).ReadString('\n')
 	if err != nil && err != io.EOF {
-		fmt.Printf("Error reading string: %s", err.Error())
+		fmt.Printf("Error reading string: %v", err)
 		return
 	}
 	runes := []rune(strings.TrimSpace(inputString))
