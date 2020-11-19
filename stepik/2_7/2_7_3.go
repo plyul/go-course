@@ -2,6 +2,8 @@ package main
 
 import "fmt"
 
+const CharZeroASCIICode = 48
+
 func main() {
 	var input string
 	fmt.Scan(&input)
@@ -11,5 +13,5 @@ func main() {
 			max = v
 		}
 	}
-	fmt.Println(max - 48)
+	fmt.Println(max - CharZeroASCIICode) // Преобразование значения max из цифры в кодировке ASCII в просто цифру
 }
