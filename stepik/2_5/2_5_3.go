@@ -9,12 +9,15 @@ import (
 )
 
 func main() {
-	var err error
 	stdinReader := bufio.NewReader(os.Stdin)
 	X, err := stdinReader.ReadString('\n')
+	if err != nil && err != io.EOF {
+		fmt.Printf("Error reading string: %s", err.Error())
+		return
+	}
 	S, err := stdinReader.ReadString('\n')
 	if err != nil && err != io.EOF {
-		fmt.Printf("Error reading strings: %s", err.Error())
+		fmt.Printf("Error reading string: %s", err.Error())
 		return
 	}
 	X = strings.TrimSpace(X)
