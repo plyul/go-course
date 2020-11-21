@@ -11,8 +11,8 @@ type SortedList struct {
 	head *node
 }
 
-func New() SortedList {
-	return SortedList{}
+func New() *SortedList {
+	return &SortedList{}
 }
 
 func (l *SortedList) Insert(v int) {
@@ -37,32 +37,23 @@ func (l *SortedList) Insert(v int) {
 	}
 }
 
-// Delete deletes all 'v' values from list
 func (l *SortedList) Delete(v int) {
-	for l.deleteOne(v) {
-	}
-}
-
-// deleteOne tries to delete one value from list, returning true, if delete was successful (value was found in the list), else false
-func (l *SortedList) deleteOne(v int) bool {
-	if l.head == nil {
-		return false
-	}
 	var prev *node
 	cur := l.head
-	for cur.value != v {
-		prev = cur
-		cur = cur.next
-		if cur == nil {
-			return false
+	for cur != nil {
+		if cur.value == v {
+			if prev != nil {
+				prev.next = cur.next
+				cur = cur.next
+			} else {
+				l.head = cur.next
+				cur = l.head
+			}
+		} else {
+			prev = cur
+			cur = cur.next
 		}
 	}
-	if prev != nil {
-		prev.next = cur.next
-	} else {
-		l.head = cur.next
-	}
-	return true
 }
 
 func (l *SortedList) GetMax() (int, error) {
