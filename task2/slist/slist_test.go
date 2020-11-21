@@ -1,6 +1,7 @@
 package slist
 
 import (
+	"math/rand"
 	"testing"
 )
 
@@ -101,4 +102,34 @@ func TestSortedList_Delete(t *testing.T) {
 			}
 		}
 	}
+}
+
+// go test -bench='DeleteOne' -benchmem .
+func BenchmarkSortedList_DeleteOne1k(b *testing.B)   { benchmarkSortedList_DeleteOne(1000, b) }
+func BenchmarkSortedList_DeleteOne10k(b *testing.B)  { benchmarkSortedList_DeleteOne(10000, b) }
+func BenchmarkSortedList_DeleteOne20k(b *testing.B)  { benchmarkSortedList_DeleteOne(20000, b) }
+func BenchmarkSortedList_DeleteOne30k(b *testing.B)  { benchmarkSortedList_DeleteOne(30000, b) }
+func BenchmarkSortedList_DeleteOne40k(b *testing.B)  { benchmarkSortedList_DeleteOne(40000, b) }
+func BenchmarkSortedList_DeleteOne50k(b *testing.B)  { benchmarkSortedList_DeleteOne(50000, b) }
+func BenchmarkSortedList_DeleteOne60k(b *testing.B)  { benchmarkSortedList_DeleteOne(60000, b) }
+func BenchmarkSortedList_DeleteOne70k(b *testing.B)  { benchmarkSortedList_DeleteOne(70000, b) }
+func BenchmarkSortedList_DeleteOne80k(b *testing.B)  { benchmarkSortedList_DeleteOne(80000, b) }
+func BenchmarkSortedList_DeleteOne90k(b *testing.B)  { benchmarkSortedList_DeleteOne(90000, b) }
+func BenchmarkSortedList_DeleteOne100k(b *testing.B) { benchmarkSortedList_DeleteOne(100000, b) }
+func BenchmarkSortedList_DeleteOne110k(b *testing.B) { benchmarkSortedList_DeleteOne(110000, b) }
+func BenchmarkSortedList_DeleteOne120k(b *testing.B) { benchmarkSortedList_DeleteOne(120000, b) }
+func BenchmarkSortedList_DeleteOne130k(b *testing.B) { benchmarkSortedList_DeleteOne(130000, b) }
+func BenchmarkSortedList_DeleteOne140k(b *testing.B) { benchmarkSortedList_DeleteOne(140000, b) }
+func BenchmarkSortedList_DeleteOne150k(b *testing.B) { benchmarkSortedList_DeleteOne(150000, b) }
+
+func benchmarkSortedList_DeleteOne(n int, b *testing.B) {
+	rand.Seed(1)
+	slist := New()
+	for i := 0; i < n; i++ {
+		v := rand.Intn(1<<63 - 1)
+		slist.Insert(v)
+	}
+	v := rand.Intn(1<<63 - 1)
+	b.ResetTimer()
+	slist.Delete(v)
 }

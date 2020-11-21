@@ -99,7 +99,7 @@ func TestGetIndex(t *testing.T) {
 	}
 }
 
-// go test -bench='Insert\d' .
+// go test -bench='Insert\d' -benchmem .
 // Evaluated complexity O(n^2)
 func BenchmarkSortedArray_Insert100(b *testing.B)  { benchmarkSortedArray_Insert(100, b) }
 func BenchmarkSortedArray_Insert1k(b *testing.B)   { benchmarkSortedArray_Insert(1000, b) }
@@ -128,7 +128,7 @@ func benchmarkSortedArray_Insert(n int, b *testing.B) {
 	}
 }
 
-// go test -bench='InsertOne' .
+// go test -bench='InsertOne' -benchmem .
 // Evaluated complexity O(n)
 func BenchmarkSortedArray_InsertOne1k(b *testing.B)   { benchmarkSortedArray_InsertOne(1000, b) }
 func BenchmarkSortedArray_InsertOne10k(b *testing.B)  { benchmarkSortedArray_InsertOne(10000, b) }
@@ -159,7 +159,7 @@ func benchmarkSortedArray_InsertOne(n int, b *testing.B) {
 	sa.Insert(v)
 }
 
-// go test -bench='DeleteOne' .
+// go test -bench='DeleteOne' -benchmem .
 func BenchmarkSortedArray_DeleteOne1k(b *testing.B)   { benchmarkSortedArray_DeleteOne(1000, b) }
 func BenchmarkSortedArray_DeleteOne10k(b *testing.B)  { benchmarkSortedArray_DeleteOne(10000, b) }
 func BenchmarkSortedArray_DeleteOne20k(b *testing.B)  { benchmarkSortedArray_DeleteOne(20000, b) }
