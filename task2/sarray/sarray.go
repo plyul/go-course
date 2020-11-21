@@ -54,6 +54,18 @@ func (a *SortedArray) Delete(value int) {
 	}
 }
 
+func (a *SortedArray) IsEqual(s SortedArray) bool {
+	if len(a.array) != len(s.array) {
+		return false
+	}
+	for i, v := range a.array {
+		if s.array[i] != v {
+			return false
+		}
+	}
+	return true
+}
+
 // getIndex returns index of given value in array.
 // If value is not present in array, inserting it at given position will retain array sorted.
 func getIndex(array []int, value int) int {

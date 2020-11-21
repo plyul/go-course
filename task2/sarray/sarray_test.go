@@ -79,6 +79,31 @@ func TestDelete(t *testing.T) {
 	}
 }
 
+func TestEqual(t *testing.T) {
+	var testCases = []struct {
+		array1, array2 []int
+		isEqual        bool
+	}{
+		{[]int{}, []int{}, true},
+		{[]int{20}, []int{20}, true},
+		{[]int{10, 20}, []int{10}, false},
+		{[]int{10}, []int{10, 20}, false},
+		{[]int{10, 20}, []int{}, false},
+		{[]int{}, []int{10, 20}, false},
+		{[]int{10, 30}, []int{10, 20}, false},
+		{[]int{1, 2, 4, 8, 16, 32, 64}, []int{1, 2, 4, 8, 16, 32, 64}, true},
+	}
+	for _, tt := range testCases {
+		a1 := New(len(tt.array1))
+		a1.array = append(a1.array, tt.array1...)
+		a2 := New(len(tt.array2))
+		a2.array = append(a2.array, tt.array2...)
+		if a1.IsEqual(a2) != tt.isEqual {
+			t.Errorf("Equality error array1: %v; array2: %v; expected: %v", tt.array1, tt.array2, tt.isEqual)
+		}
+	}
+}
+
 func TestGetIndex(t *testing.T) {
 	var testCases = []struct {
 		array       []int
