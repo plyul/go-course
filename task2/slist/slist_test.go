@@ -104,6 +104,67 @@ func TestSortedList_Delete(t *testing.T) {
 	}
 }
 
+// go test -run Length -coverprofile=coverage.out
+// go tool cover -html=coverage.out
+func TestSortedList_Length(t *testing.T) {
+	type listOperation int
+	const (
+		opInsert listOperation = iota
+		opDelete
+	)
+	var testSequence = []struct {
+		value          int
+		operation      listOperation
+		expectedLength int
+	}{
+		{10, opInsert, 1},
+		{20, opInsert, 2},
+		{5, opInsert, 3},
+		{15, opInsert, 4},
+		{5, opDelete, 3},
+		{20, opDelete, 2},
+		{10, opDelete, 1},
+	}
+	sl := New()
+	if sl.Length() != 0 {
+		t.Error("New list has length not equal to zero")
+	}
+	for i, seq := range testSequence {
+		if seq.operation == opInsert {
+			sl.Insert(seq.value)
+		} else {
+			sl.Delete(seq.value)
+		}
+		if sl.Length() != seq.expectedLength {
+			t.Errorf("Error in test sequence step %d", i)
+		}
+	}
+}
+
+func TestSortedList_IsEqual(t *testing.T) {
+	var testCases = []struct {
+		self, other []int
+		isEqual     bool
+	}{
+		{[]int{}, []int{}, true},
+		{[]int{10}, []int{}, false},
+		{[]int{}, []int{10}, false},
+		{[]int{10, 20}, []int{10}, false},
+		{[]int{10}, []int{10, 20}, false},
+		{[]int{10}, []int{10}, true},
+		{[]int{10}, []int{20}, false},
+	}
+	for _, tt := range testCases {
+		self := New()
+		self.InsertValues(tt.other)
+		other := New()
+		other.InsertValues(tt.self)
+		if self.IsEqual(other) != tt.isEqual {
+			t.Errorf("Expect equality of %v and %v to be %v, but it is not", self, other, tt.isEqual)
+		}
+	}
+}
+
 // go test -bench='DeleteOne' -benchmem .
 func BenchmarkSortedList_DeleteOne1k(b *testing.B)   { benchmarkSortedList_DeleteOne(1000, b) }
 func BenchmarkSortedList_DeleteOne10k(b *testing.B)  { benchmarkSortedList_DeleteOne(10000, b) }

@@ -9,15 +9,17 @@ type node struct {
 
 type SortedList struct {
 	head *node
+	len  int
 }
 
-func New() *SortedList {
-	return &SortedList{}
+func New() SortedList {
+	return SortedList{}
 }
 
 func (l *SortedList) Insert(v int) {
 	if l.head == nil {
 		l.head = &node{v, nil}
+		l.len++
 		return
 	}
 	var prev *node
@@ -25,6 +27,7 @@ func (l *SortedList) Insert(v int) {
 	for cur.value < v {
 		if cur.next == nil {
 			cur.next = &node{v, nil}
+			l.len++
 			return
 		}
 		prev = cur
@@ -34,6 +37,13 @@ func (l *SortedList) Insert(v int) {
 		prev.next = &node{v, cur}
 	} else {
 		l.head = &node{v, cur}
+	}
+	l.len++
+}
+
+func (l *SortedList) InsertValues(values []int) {
+	for _, v := range values {
+		l.Insert(v)
 	}
 }
 
@@ -49,11 +59,32 @@ func (l *SortedList) Delete(v int) {
 				l.head = cur.next
 				cur = l.head
 			}
+			l.len--
 		} else {
 			prev = cur
 			cur = cur.next
 		}
 	}
+}
+
+func (l *SortedList) Length() int {
+	return l.len
+}
+
+func (l *SortedList) IsEqual(other SortedList) bool {
+	if l.Length() != other.Length() {
+		return false
+	}
+	iterSelf := l.head
+	iterOther := other.head
+	for iterSelf != nil {
+		if iterOther.value != iterSelf.value {
+			return false
+		}
+		iterSelf = iterSelf.next
+		iterOther = iterOther.next
+	}
+	return true
 }
 
 func (l *SortedList) GetMax() (int, error) {
