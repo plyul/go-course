@@ -22,7 +22,7 @@ func main() {
 		return
 	}
 	p := textparser.New(f)
-	wc := wordscounter.New(&*p)
+	wc := wordscounter.New(p)
 	output := wc.Top(c.NumTopWords, c.MinWordLen)
 	for _, wd := range output {
 		fmt.Printf("%s [%d] @%d\n", wd.Word, wd.Count, wd.InsertIndex)

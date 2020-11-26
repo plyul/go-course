@@ -14,8 +14,8 @@ const (
 func TestSortedMap_Top(t *testing.T) {
 	input := "I like this very much.\nDo you like this?"
 	p := textparser.New(strings.NewReader(input))
-	wc := New(*p, minWordLength)
-	output := wc.Top(numTopWords)
+	wc := New(p)
+	output := wc.Top(numTopWords, minWordLength)
 	if len(output) != 2 {
 		t.Errorf("Unexpected length of output slice")
 	}

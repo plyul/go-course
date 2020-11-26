@@ -2,6 +2,7 @@ package textparser
 
 import (
 	"fmt"
+	"go-course/task3/internal/wordsprovider"
 	"os"
 	"testing"
 )
@@ -11,30 +12,30 @@ import (
 func TestTextParser_ScanScarlett(t *testing.T) {
 	var testSequence = []struct {
 		word   string
-		status WordTag
+		status wordsprovider.WordTag
 	}{
-		{"Chapter", OnEdge},
-		{"one", OnEdge},
-		{"News", OnEdge},
-		{"of", Regular},
-		{"a", Regular},
-		{"Wedding", OnEdge},
-		{"Scarlett", OnEdge},
-		{"O'Hara", Regular},
-		{"was", Regular},
-		{"blah-blah", Regular},
-		{"twins", Regular},
-		{"were", OnEdge},
-		{"Her", OnEdge},
-		{"eyes", Regular},
-		{"were", Regular},
-		{"blah-blah", Regular},
-		{"and", Regular},
-		{"gloves", OnEdge},
-		{"On", OnEdge},
-		{"that", Regular},
-		{"bright", OnEdge},
-		{"", EOF},
+		{"Chapter", wordsprovider.OnEdge},
+		{"one", wordsprovider.OnEdge},
+		{"News", wordsprovider.OnEdge},
+		{"of", wordsprovider.Regular},
+		{"a", wordsprovider.Regular},
+		{"Wedding", wordsprovider.OnEdge},
+		{"Scarlett", wordsprovider.OnEdge},
+		{"O'Hara", wordsprovider.Regular},
+		{"was", wordsprovider.Regular},
+		{"blah-blah", wordsprovider.Regular},
+		{"twins", wordsprovider.Regular},
+		{"were", wordsprovider.OnEdge},
+		{"Her", wordsprovider.OnEdge},
+		{"eyes", wordsprovider.Regular},
+		{"were", wordsprovider.Regular},
+		{"blah-blah", wordsprovider.Regular},
+		{"and", wordsprovider.Regular},
+		{"gloves", wordsprovider.OnEdge},
+		{"On", wordsprovider.OnEdge},
+		{"that", wordsprovider.Regular},
+		{"bright", wordsprovider.OnEdge},
+		{"", wordsprovider.EOF},
 	}
 	f, err := os.Open("testdata/test_cut.txt")
 	defer func() {
