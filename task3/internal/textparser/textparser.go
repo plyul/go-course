@@ -55,7 +55,7 @@ func (p *TextParser) GetWord() (string, wordsprovider.WordTag) {
 func (p *TextParser) wordFromBuffer() (string, wordsprovider.WordTag) {
 	var w string
 	if len(p.words) > 0 {
-		w = strings.ToLower(filterPunctuation(p.words[0]))
+		w = strings.ToLower(distilWord(p.words[0]))
 		p.words = p.words[1:]
 		if len(p.words) == 0 {
 			p.words = nil
@@ -65,7 +65,7 @@ func (p *TextParser) wordFromBuffer() (string, wordsprovider.WordTag) {
 			s = wordsprovider.OnEdge
 			p.sentenceBegin = false
 		}
-		if strings.Contains(w, ".") { // слово содержит точку, т.е. оно на границе предложения
+		if strings.HasSuffix(w, ".") { // слово содержит точку в конце, т.е. оно на границе предложения
 			w = strings.Trim(w, ".")
 			s = wordsprovider.OnEdge // вернётся для текущего слова
 			p.sentenceBegin = true   // условие сыграет при следующем вызове функции
@@ -79,11 +79,14 @@ func (p *TextParser) wordFromBuffer() (string, wordsprovider.WordTag) {
 	return "", wordsprovider.EOF
 }
 
-// filterPunctuation удаляет все символы с краёв слова, кроме букв и символа точки.
+// distilWord удаляет из слова все символы, кроме букв и точки
 // Символ точки нам понадобится, чтобы определять границу предложения.
-func filterPunctuation(s string) string {
-	r := strings.TrimFunc(s, func(r rune) bool {
-		return !unicode.IsLetter(r) && r != '.'
-	})
-	return r
+func distilWord(s string) string {
+	var result []rune
+	for _, r := range []rune(s) {
+		if unicode.IsLetter(r) || r == '.' {
+			result = append(result, r)
+		}
+	}
+	return string(result)
 }
