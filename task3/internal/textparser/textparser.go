@@ -55,7 +55,7 @@ func (p *TextParser) GetWord() (string, wordsprovider.WordTag) {
 func (p *TextParser) wordFromBuffer() (string, wordsprovider.WordTag) {
 	var w string
 	if len(p.words) > 0 {
-		w = filterPunctuation(p.words[0])
+		w = strings.ToLower(filterPunctuation(p.words[0]))
 		p.words = p.words[1:]
 		if len(p.words) == 0 {
 			p.words = nil
