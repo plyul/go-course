@@ -1,4 +1,4 @@
-package config
+package topcnt
 
 import (
 	"fmt"
@@ -17,7 +17,7 @@ type Configuration struct {
 	NumTopWords   int
 }
 
-func Get() *Configuration {
+func configure() *Configuration {
 	var c Configuration
 	var needHelp bool
 	pflag.BoolVar(&needHelp, "help", false, "Show available configuration options")
