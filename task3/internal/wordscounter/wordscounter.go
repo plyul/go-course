@@ -27,7 +27,7 @@ func New(wp wordsprovider.WordsProvider) *WordsCounter {
 // * Слова возвращаются в порядке, в котором они встретились в тексте.
 func (wf WordsCounter) Top(N int, minWordLen int) []sortedmap.WordData {
 	countedWords := sortedmap.New(defaultSortedMapCapacity)
-	bannedWords := map[string]bool{}
+	bannedWords := make(map[string]bool)
 	for {
 		word, tag := wf.wp.GetWord()
 		if tag == wordsprovider.OnEdge {

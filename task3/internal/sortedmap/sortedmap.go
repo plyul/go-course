@@ -34,8 +34,7 @@ func (sm *SortedMap) Increment(key string) {
 
 // Delete удаляет ключ key, если он присутствует в отображении
 func (sm *SortedMap) Delete(key string) {
-	_, keyIsPresent := sm.wordCounters[key]
-	if keyIsPresent {
+	if _, ok := sm.wordCounters[key]; ok {
 		delete(sm.wordCounters, key)
 		delete(sm.wordInsertIndices, key)
 		sm.size--

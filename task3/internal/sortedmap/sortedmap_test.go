@@ -27,6 +27,16 @@ func TestSortedMap_IncrementAndDelete(t *testing.T) {
 		t.Errorf("Failed at size after insert")
 	}
 
+	if sm.wordInsertIndices["first"] != 1 {
+		t.Errorf("Failed at 'first' insert index")
+	}
+	if sm.wordInsertIndices["second"] != 2 {
+		t.Errorf("Failed at 'first' insert index")
+	}
+	if sm.wordInsertIndices["third"] != 3 {
+		t.Errorf("Failed at 'first' insert index")
+	}
+
 	sm.Delete("first")
 	sm.Delete("second")
 	sm.Delete("third")
@@ -35,7 +45,7 @@ func TestSortedMap_IncrementAndDelete(t *testing.T) {
 		t.Errorf("Failed at 'wordCounters' len after delete")
 	}
 	if len(sm.wordInsertIndices) > 0 {
-		t.Errorf("Failed at 'wordCounters' len after delete")
+		t.Errorf("Failed at 'wordInsertIndices' len after delete")
 	}
 	if sm.size != 0 {
 		t.Errorf("Failed at size after delete")
