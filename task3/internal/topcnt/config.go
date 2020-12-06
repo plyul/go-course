@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/spf13/pflag"
 	"os"
+	"runtime"
 )
 
 const (
 	minWordLengthDefault  = 4
 	numTopWordsDefault    = 10
-	chunkSizeBytesDefault = 50000
+	chunkSizeBytesDefault = 10000
 )
 
 type Configuration struct {
@@ -17,6 +18,7 @@ type Configuration struct {
 	MinWordLen     int
 	NumTopWords    int
 	ChunkSizeBytes int64
+	NumWorkers     int
 }
 
 func configure() *Configuration {
@@ -27,6 +29,7 @@ func configure() *Configuration {
 	pflag.IntVar(&c.MinWordLen, "min-len", minWordLengthDefault, "Minimal word length to count")
 	pflag.IntVar(&c.NumTopWords, "num-top", numTopWordsDefault, "Number of top words to output")
 	pflag.Int64Var(&c.ChunkSizeBytes, "chunk-size", chunkSizeBytesDefault, "Size of chunk for parallel computation, bytes")
+	pflag.IntVar(&c.NumWorkers, "num-workers", runtime.NumCPU(), "Number of workers")
 	pflag.Parse()
 	if needHelp {
 		pflag.Usage()

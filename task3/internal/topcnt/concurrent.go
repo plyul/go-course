@@ -11,47 +11,68 @@ import (
 )
 
 const (
-	channelBufferSize         = 100
+	channelBufferSize        = 100
 	defaultSortedMapCapacity = 1500
 )
 
 func (app Application) computeConcurrent(f *os.File) error {
-	chunkOffsets, err := chunkreader.ChunkOffsets(f, app.config.ChunkSizeBytes)
+	chunkOffsets, err := chunkreader.ChunkOffsets(f, app.config.ChunkSizeBytes) // нарезка файла на границы чанков
 	if err != nil {
 		return errors.New(fmt.Sprintf("computeConcurrent error: %v", err))
 	}
-	fmt.Println(chunkOffsets)
-
-	var wg sync.WaitGroup
-	numChunks := len(chunkOffsets) - 1
-	// TODO: Сделать ограничение количества воркеров задаваемым параметром N
-	wg.Add(numChunks) // Количество воркеров по количеству чанков
-	wordChan := make(chan textparser.WordData, channelBufferSize) // все читатели чанков будут складывать слова в этот канал
-	for i := 0; i < numChunks; i++ {
-		go func(begin, end int64) { // запускаем параллельное/конкурентное чтение файла чанками и наливку слов в канал
-			defer wg.Done()
-			fmt.Printf("Processing chunk [%d-%d)\n", begin, end)
-			cr := chunkreader.New(f, begin, end)
-			p := textparser.New(cr)
-			var wd textparser.WordData
-			for wd.Tag != textparser.EOF {
-				wd = p.GetWord()
-				wd.ChunkOffset = begin
-				wordChan <- wd
-			}
-			fmt.Printf("Chunk %d finished\n", begin)
-		}(chunkOffsets[i], chunkOffsets[i+1])
+	numChunks := len(chunkOffsets) - 1 // количество чанков в файле
+	numWorkers := app.config.NumWorkers
+	if numChunks < numWorkers {
+		numWorkers = numChunks
 	}
 
-	topConcurrentIsDone := make(chan bool)
+	// запускаем заданное число воркеров для конкурентного чтения файла чанками и наливку слов в канал wordChan
+	type jobStruct struct {
+		begin int64
+		end   int64
+	}
+	jobChan := make(chan jobStruct, numChunks)                    // воркеры будут брать задачи из этого канала
+	wordChan := make(chan textparser.WordData, channelBufferSize) // воркеры будут складывать слова в этот канал
+	var wg sync.WaitGroup
+	wg.Add(numWorkers)
+	for w := 1; w <= numWorkers; w++ {
+		go func(w int) {
+			defer wg.Done()
+			for job := range jobChan {
+				//fmt.Printf("Worker %d start processing chunk [%d-%d)\n", w, job.begin, job.end)
+				cr := chunkreader.New(f, job.begin, job.end)
+				p := textparser.New(cr)
+				var wd textparser.WordData
+				for wd.Tag != textparser.EOF {
+					wd = p.GetWord()
+					wd.ChunkOffset = job.begin
+					wordChan <- wd
+				}
+				//fmt.Printf("Worker %d finished\n", w)
+			}
+		}(w)
+	}
+
+	// наливаем задачи в канал jobChan
+	for i := 0; i < numChunks; i++ {
+		job := jobStruct{
+			begin: chunkOffsets[i],
+			end:   chunkOffsets[i+1],
+		}
+		jobChan <- job
+	}
+	close(jobChan)
+
+	// Запускаем чтение слов из канала wordChan и их подсчёт
+	topIsDone := make(chan bool)
 	var topWords []sortedmap.WordData
-	go func() { // Запускаем чтение слов из канала wordChan и их подсчет
+	go func() {
 		topWords = top(app.config.NumTopWords, app.config.MinWordLen, wordChan)
-		topConcurrentIsDone <- true
+		topIsDone <- true
 	}()
-	wg.Wait() // ждём, пока все воркеры закончат работу
-	close(wordChan) // закрываем канал, больше слов не будет
-	<-topConcurrentIsDone // ждём, пока закончится подсчёт слов
+	wg.Wait()                     // ждём, пока все воркеры закончат наливку слов в канал
+	close(wordChan)               // закрываем канал, больше слов не будет
+	<-topIsDone                   // ждём, пока закончится подсчёт слов
 	for _, wd := range topWords { // и выводим результат
 		fmt.Printf("%s [%d] @%d\n", wd.Word, wd.Count, wd.InsertIndex)
 	}
