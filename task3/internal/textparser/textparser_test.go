@@ -10,8 +10,8 @@ import (
 // go tool cover -html=coverage.out
 func TestTextParser_ScanScarlett(t *testing.T) {
 	var testSequence = []struct {
-		word   string
-		tag WordTag
+		word string
+		tag  WordTag
 	}{
 		{"chapter", OnEdge},
 		{"one", OnEdge},

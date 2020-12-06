@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	bufSize = 65536
+	bufSize                   = 65536
 	chunkOffsetsSliceCapacity = 100
 )
 

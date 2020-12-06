@@ -23,6 +23,7 @@ type TextParser struct {
 // * OnEdge: слово находится на границе предложения;
 // * Regular: слово без особых признаков.
 type WordTag int
+
 const (
 	Regular WordTag = iota
 	OnEdge
@@ -53,8 +54,8 @@ func (p *TextParser) GetWord() WordData {
 		if p.words == nil { // Буфер слов пуст, нужно сканировать новую строку
 			if !p.textScanner.Scan() { // Текст закончен, закончили сканирование
 				return WordData{
-					Word: "",
-					Tag:  EOF,
+					Word:     "",
+					Tag:      EOF,
 					ChunkIdx: p.wordIndex,
 				}
 			}
@@ -70,8 +71,8 @@ func (p *TextParser) GetWord() WordData {
 		p.wordIndex++
 		if s != EOF {
 			return WordData{
-				Word: w,
-				Tag:  s,
+				Word:     w,
+				Tag:      s,
 				ChunkIdx: p.wordIndex,
 			}
 		}
@@ -95,8 +96,8 @@ func (p *TextParser) wordFromBuffer() (string, WordTag) {
 		}
 		if strings.HasSuffix(w, ".") { // слово содержит точку в конце, т.е. оно на границе предложения
 			w = strings.Trim(w, ".")
-			s = OnEdge // вернётся для текущего слова
-			p.sentenceBegin = true   // условие сыграет при следующем вызове функции
+			s = OnEdge             // вернётся для текущего слова
+			p.sentenceBegin = true // условие сыграет при следующем вызове функции
 		}
 		if len(p.words) == 1 { // осталось одно слово в буфере, т.е. оно на границе предложения
 			p.sentenceBegin = true // условие сыграет при следующем вызове функции

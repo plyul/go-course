@@ -5,16 +5,16 @@ package sortedmap
 import "sort"
 
 type SortedMap struct {
-	wordCounters         map[string]int   // слово -> кол-во
-	wordInsertIndices    map[string]int64 // слово -> индекс вставки
-	size                 int
+	wordCounters      map[string]int   // слово -> кол-во
+	wordInsertIndices map[string]int64 // слово -> индекс вставки
+	size              int
 }
 
 func New(capacity int) *SortedMap {
 	return &SortedMap{
-		wordCounters:         make(map[string]int, capacity),
-		wordInsertIndices:    make(map[string]int64, capacity),
-		size:                 0,
+		wordCounters:      make(map[string]int, capacity),
+		wordInsertIndices: make(map[string]int64, capacity),
+		size:              0,
 	}
 }
 
@@ -26,7 +26,7 @@ func (sm *SortedMap) Increment(key string, chunkOff int64, chunkIdx int) {
 		sm.wordCounters[key] = 0
 		sm.size++
 		sm.wordInsertIndices[key] = uIdx
-		}
+	}
 	sm.wordCounters[key]++
 	if sm.wordInsertIndices[key] > uIdx {
 		sm.wordInsertIndices[key] = uIdx
