@@ -6,12 +6,12 @@ import (
 
 func TestSortedMap_IncrementAndDelete(t *testing.T) {
 	sm := New(10)
-	sm.Increment("first")
-	sm.Increment("second")
-	sm.Increment("third")
-	sm.Increment("second")
-	sm.Increment("first")
-	sm.Increment("second")
+	sm.Increment("first", 0, 1)
+	sm.Increment("second", 0, 2)
+	sm.Increment("third", 0, 3)
+	sm.Increment("second", 0, 4)
+	sm.Increment("first", 0, 5)
+	sm.Increment("second", 0, 6)
 
 	if sm.wordCounters["first"] != 2 {
 		t.Errorf("Failed at 'first' counter")

@@ -5,7 +5,6 @@ package textparser
 
 import (
 	"bufio"
-	"go-course/task3/internal/wordsprovider"
 	"io"
 	"strings"
 	"unicode"
@@ -15,7 +14,27 @@ type TextParser struct {
 	textScanner   *bufio.Scanner
 	lineScanner   *bufio.Scanner
 	words         []string
+	wordIndex     int
 	sentenceBegin bool
+}
+
+// Признаки:
+// * EOF: слова отсутствуют, входные данные закончились;
+// * OnEdge: слово находится на границе предложения;
+// * Regular: слово без особых признаков.
+type WordTag int
+
+const (
+	Regular WordTag = iota
+	OnEdge
+	EOF
+)
+
+type WordData struct {
+	Word        string
+	Tag         WordTag
+	ChunkOffset int64
+	ChunkIdx    int
 }
 
 // New возвращает экземпляр TextParser, возвращающий слова из переданного интерфейса io.Reader.
@@ -24,16 +43,21 @@ func New(r io.Reader) *TextParser {
 		textScanner:   bufio.NewScanner(r),
 		lineScanner:   nil,
 		words:         nil,
+		wordIndex:     0,
 		sentenceBegin: true,
 	}
 }
 
-// GetWord реализует соответствующий метод интерфейса WordsProvider
-func (p *TextParser) GetWord() (string, wordsprovider.WordTag) {
+// GetWord возвращает структуру WordData, описывающую слово, полученное из io.Reader
+func (p *TextParser) GetWord() WordData {
 	for { // Сканируем слова и строки, подыскивая подходящее слово для возврата
 		if p.words == nil { // Буфер слов пуст, нужно сканировать новую строку
 			if !p.textScanner.Scan() { // Текст закончен, закончили сканирование
-				return "", wordsprovider.EOF
+				return WordData{
+					Word:     "",
+					Tag:      EOF,
+					ChunkIdx: p.wordIndex,
+				}
 			}
 			p.sentenceBegin = true
 			line := p.textScanner.Text()
@@ -44,15 +68,20 @@ func (p *TextParser) GetWord() (string, wordsprovider.WordTag) {
 			}
 		}
 		w, s := p.wordFromBuffer()
-		if s != wordsprovider.EOF {
-			return w, s
+		p.wordIndex++
+		if s != EOF {
+			return WordData{
+				Word:     w,
+				Tag:      s,
+				ChunkIdx: p.wordIndex,
+			}
 		}
 	}
 }
 
 // wordFromBuffer возвращает слово из буфера p.words.
 // Если функция возвращает wordsprovider.EOF, гарантируется, что p.words == nil.
-func (p *TextParser) wordFromBuffer() (string, wordsprovider.WordTag) {
+func (p *TextParser) wordFromBuffer() (string, WordTag) {
 	var w string
 	if len(p.words) > 0 {
 		w = strings.ToLower(distilWord(p.words[0]))
@@ -60,15 +89,15 @@ func (p *TextParser) wordFromBuffer() (string, wordsprovider.WordTag) {
 		if len(p.words) == 0 {
 			p.words = nil
 		}
-		s := wordsprovider.Regular
+		s := Regular
 		if p.sentenceBegin {
-			s = wordsprovider.OnEdge
+			s = OnEdge
 			p.sentenceBegin = false
 		}
 		if strings.HasSuffix(w, ".") { // слово содержит точку в конце, т.е. оно на границе предложения
 			w = strings.Trim(w, ".")
-			s = wordsprovider.OnEdge // вернётся для текущего слова
-			p.sentenceBegin = true   // условие сыграет при следующем вызове функции
+			s = OnEdge             // вернётся для текущего слова
+			p.sentenceBegin = true // условие сыграет при следующем вызове функции
 		}
 		if len(p.words) == 1 { // осталось одно слово в буфере, т.е. оно на границе предложения
 			p.sentenceBegin = true // условие сыграет при следующем вызове функции
@@ -76,7 +105,7 @@ func (p *TextParser) wordFromBuffer() (string, wordsprovider.WordTag) {
 		return w, s
 	}
 	p.words = nil
-	return "", wordsprovider.EOF
+	return "", EOF
 }
 
 // distilWord удаляет из слова все символы, кроме букв и точки

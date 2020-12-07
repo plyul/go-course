@@ -1,10 +1,7 @@
 package topcnt
 
 import (
-	"errors"
 	"fmt"
-	"go-course/task3/internal/textparser"
-	"go-course/task3/internal/wordscounter"
 	"os"
 )
 
@@ -19,7 +16,12 @@ func New() *Application {
 }
 
 func (app Application) Run() error {
+	var err error
 	f, err := os.Open(app.config.InputFileName)
+	if err != nil {
+		fmt.Printf("error opening file: %v", err)
+		os.Exit(1)
+	}
 	defer func() {
 		if f != nil {
 			if err := f.Close(); err != nil {
@@ -27,14 +29,6 @@ func (app Application) Run() error {
 			}
 		}
 	}()
-	if err != nil {
-		return errors.New(fmt.Sprintf("error opening file: %v", err))
-	}
-	p := textparser.New(f)
-	wc := wordscounter.New(p)
-	output := wc.Top(app.config.NumTopWords, app.config.MinWordLen)
-	for _, wd := range output {
-		fmt.Printf("%s [%d] @%d\n", wd.Word, wd.Count, wd.InsertIndex)
-	}
-	return nil
+	err = app.computeConcurrent(f)
+	return err
 }

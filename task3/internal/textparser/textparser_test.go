@@ -2,7 +2,6 @@ package textparser
 
 import (
 	"fmt"
-	"go-course/task3/internal/wordsprovider"
 	"os"
 	"testing"
 )
@@ -11,31 +10,31 @@ import (
 // go tool cover -html=coverage.out
 func TestTextParser_ScanScarlett(t *testing.T) {
 	var testSequence = []struct {
-		word   string
-		status wordsprovider.WordTag
+		word string
+		tag  WordTag
 	}{
-		{"chapter", wordsprovider.OnEdge},
-		{"one", wordsprovider.OnEdge},
-		{"news", wordsprovider.OnEdge},
-		{"of", wordsprovider.Regular},
-		{"a", wordsprovider.Regular},
-		{"wedding", wordsprovider.OnEdge},
-		{"scarlett", wordsprovider.OnEdge},
-		{"ohara", wordsprovider.Regular},
-		{"was", wordsprovider.Regular},
-		{"blahblah", wordsprovider.Regular},
-		{"twins", wordsprovider.Regular},
-		{"were", wordsprovider.OnEdge},
-		{"her", wordsprovider.OnEdge},
-		{"eyes", wordsprovider.Regular},
-		{"were", wordsprovider.Regular},
-		{"blahblah", wordsprovider.Regular},
-		{"and", wordsprovider.Regular},
-		{"gloves", wordsprovider.OnEdge},
-		{"on", wordsprovider.OnEdge},
-		{"that", wordsprovider.Regular},
-		{"bright", wordsprovider.OnEdge},
-		{"", wordsprovider.EOF},
+		{"chapter", OnEdge},
+		{"one", OnEdge},
+		{"news", OnEdge},
+		{"of", Regular},
+		{"a", Regular},
+		{"wedding", OnEdge},
+		{"scarlett", OnEdge},
+		{"ohara", Regular},
+		{"was", Regular},
+		{"blahblah", Regular},
+		{"twins", Regular},
+		{"were", OnEdge},
+		{"her", OnEdge},
+		{"eyes", Regular},
+		{"were", Regular},
+		{"blahblah", Regular},
+		{"and", Regular},
+		{"gloves", OnEdge},
+		{"on", OnEdge},
+		{"that", Regular},
+		{"bright", OnEdge},
+		{"", EOF},
 	}
 	f, err := os.Open("testdata/test_cut.txt")
 	defer func() {
@@ -49,9 +48,9 @@ func TestTextParser_ScanScarlett(t *testing.T) {
 	}
 	p := New(f)
 	for i, seq := range testSequence {
-		w, s := p.GetWord()
-		if w != seq.word || s != seq.status {
-			t.Errorf("Test sequence %d failed. Expected '%v', got '%s', %v", i, seq, w, s)
+		wd := p.GetWord()
+		if wd.Word != seq.word || wd.Tag != seq.tag {
+			t.Errorf("Test sequence %d failed. Expected '%v', got '%s', %v", i, seq, wd.Word, wd.Tag)
 		}
 	}
 }
