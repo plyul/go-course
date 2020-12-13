@@ -6,14 +6,14 @@ import (
 )
 
 type BufferedChannel struct {
-	input        chan string
-	output       chan string
+	input  chan string
+	output chan string
 }
 
 func New(input chan string, size int) *BufferedChannel {
 	bc := &BufferedChannel{
-		input:        input,
-		output:       make(chan string, size),
+		input:  input,
+		output: make(chan string, size),
 	}
 	return bc
 }
