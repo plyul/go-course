@@ -12,11 +12,18 @@ func (a *Application) stopHandler(w http.ResponseWriter, r *http.Request) {
 		a.defaultHandler(w, r)
 		return
 	}
+	a.initShutdown()
+	log.Println("Server shutdown initiated via HTTP")
+	http.Error(w, "Command accepted\n", http.StatusOK)
+}
+
+func (a *Application) initShutdown() {
 	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		log.Printf("stopHandler:server.Shutdown error: %v", a.server.Shutdown(ctx))
-		a.Finished <- true
+		a.shutdownOnce.Do(func() {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			log.Printf("initShutdown: a.server.Shutdown error: %v", a.server.Shutdown(ctx))
+			close(a.Finished)
+		})
 	}()
-	http.Error(w, "Server shutdown initiated!\n", http.StatusOK)
 }

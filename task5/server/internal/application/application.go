@@ -5,6 +5,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"os/signal"
 	"runtime"
 	"runtime/pprof"
 	"sync"
@@ -12,16 +13,18 @@ import (
 )
 
 type Application struct {
-	server   *http.Server
-	Finished chan bool
-	text     sync.Map
+	server       *http.Server
+	Finished     chan struct{}
+	shutdownOnce sync.Once
+	text         sync.Map
 }
 
 const (
-	serverTimeout    = 60 * time.Second
-	pprofAddr        = ":6060"
-	pprofCPUFileName = "cpu.prof"
-	pprofMemFileName = "mem.prof"
+	serverTimeout     = 60 * time.Second
+	pprofAddr         = ":6060"
+	pprofCPUFileName  = "cpu.prof"
+	pprofMemFileName  = "mem.prof"
+	pprofSampleRateHz = 5000
 )
 
 func New(addr string) *Application {
@@ -34,6 +37,7 @@ func New(addr string) *Application {
 	}
 	app := &Application{
 		server:   &appSrv,
+		Finished: make(chan struct{}),
 	}
 	appMux.HandleFunc("/text/", app.textHandler)
 	appMux.HandleFunc("/stat/", app.statHandler)
@@ -43,22 +47,31 @@ func New(addr string) *Application {
 }
 
 func (a *Application) Run() error {
-	go func() {
+	go func() { // Запуск горутины для контроля сигнала SIGINT. При получении сигнала инициирует завершение сервера
+		sigint := make(chan os.Signal, 1)
+		signal.Notify(sigint, os.Interrupt)
+		<-sigint
+		log.Println("Server shutdown initiated via SIGINT")
+		a.initShutdown()
+	}()
+	go func() { // Запуск HTTP-сервера подсистемы профайлинга
 		log.Println(http.ListenAndServe(pprofAddr, nil))
 	}()
 	_, debug := os.LookupEnv("DEBUG")
 	if debug {
 		f, err := os.Create(pprofCPUFileName)
 		if err != nil {
-			log.Fatal("could not create CPU profile: ", err)
+			log.Panic("could not create CPU profile: ", err)
 		}
 		defer func() {
 			if err := f.Close(); err != nil {
 				log.Println("could not close CPU profile file: ", err)
 			}
+			log.Println("CPU profile file closed successfully")
 		}()
+		runtime.SetCPUProfileRate(pprofSampleRateHz) // см. https://stackoverflow.com/questions/30871691/cant-get-golang-pprof-working/31366860#31366860
 		if err := pprof.StartCPUProfile(f); err != nil {
-			log.Fatal("could not start CPU profile: ", err)
+			log.Panic("could not start CPU profile: ", err)
 		}
 		defer pprof.StopCPUProfile()
 		log.Println("CPU profiling started")
@@ -84,6 +97,7 @@ func (a *Application) Run() error {
 		}
 		log.Println("Memory profile written successfully")
 	}
+	<-a.Finished
 	return srverr
 }
 
