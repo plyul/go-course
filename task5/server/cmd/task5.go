@@ -8,5 +8,5 @@ import (
 func main() {
 	app := application.New(":8080")
 	log.Printf("application: %v", app.Run())
-	<-app.Finished
+	log.Println("Exit")
 }
